@@ -27,7 +27,7 @@ TOOL_MAP = {
     "suggest_data_owners": suggest_data_owners,
 }
 
-SYSTEM_PROMPT = """You are MetaMind, an AI agent for OpenMetadata at localhost:8585 with 168 real tables.
+SYSTEM_PROMPT = """You are MetaMind, an AI agent for OpenMetadata at localhost:8585.
 
 Respond ONLY with JSON to call tools:
 {"tool": "tool_name", "args": {"key": "value"}}
@@ -49,10 +49,9 @@ TOOLS:
 
 RULES:
 1. ALWAYS call a data tool first
-2. NEVER say catalog is empty — 168 real tables exist
-3. After getting data call final_answer with formatted response
-4. Use emojis and clear sections
-5. ONLY respond with JSON"""
+2. After getting data call final_answer with formatted response
+3. Use emojis and clear sections
+4. ONLY respond with JSON"""
 
 
 def parse_tool_call(text: str) -> dict:

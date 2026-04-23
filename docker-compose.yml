@@ -19,7 +19,7 @@ services:
   mysql:
     container_name: openmetadata_mysql
     image: docker.getcollate.io/openmetadata/db:1.12.5
-    command: "--sort_buffer_size=10M"
+    command: "--sort_buffer_size=10M --innodb-force-recovery=0"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
@@ -42,7 +42,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:9.3.0
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms1024m -Xmx1024m
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
       - xpack.security.enabled=false
     networks:
       - app_net

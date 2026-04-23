@@ -18,16 +18,20 @@ with st.sidebar:
     st.divider()
     st.markdown("### 🔍 Discovery")
     for ex in ["What tables exist?", "List the first 20 tables", "Search for process tables", "Find tables related to user data"]:
-        if st.button(ex, key=ex): st.session_state.pending = ex
+        if st.button(ex, key=ex):
+            st.session_state.pending = ex
     st.markdown("### 📋 Schema")
     for ex in ["Get details of ACT_HI_PROCINST table", "Show columns of ACT_EVT_LOG table", "Get details of ACT_GE_PROPERTY table"]:
-        if st.button(ex, key=ex): st.session_state.pending = ex
+        if st.button(ex, key=ex):
+            st.session_state.pending = ex
     st.markdown("### 🛡️ Governance")
     for ex in ["Detect PII in ACT_EVT_LOG table", "Auto classify PII across all tables", "Generate governance report for 10 tables", "Suggest data owners for unowned tables", "Apply PII.Sensitive tag to ACT_GE_BYTEARRAY"]:
-        if st.button(ex, key=ex): st.session_state.pending = ex
+        if st.button(ex, key=ex):
+            st.session_state.pending = ex
     st.markdown("### 📊 Quality & Lineage")
     for ex in ["Check data quality of ACT_HI_PROCINST", "Show lineage of ACT_HI_PROCINST", "List all pipelines"]:
-        if st.button(ex, key=ex): st.session_state.pending = ex
+        if st.button(ex, key=ex):
+            st.session_state.pending = ex
     st.divider()
     st.success("🟢 OpenMetadata v1.12.5\nlocalhost:8585")
     st.markdown("**168 tables** | **12 tools** | **MCP ready**")
@@ -44,7 +48,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": """👋 Hi! I'm **MetaMind**, your AI agent for OpenMetadata.
 
 I can help you:
-- 🔍 **Discover** 168 tables in your catalog
+- 🔍 **Discover** tables in your catalog
 - 📋 **Explore** full schema and columns
 - 🛡️ **Detect PII** and auto-classify tables
 - 📊 **Check quality** and data health

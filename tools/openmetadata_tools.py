@@ -6,8 +6,7 @@ ROOT = pathlib.Path(__file__).parent.parent
 load_dotenv(dotenv_path=ROOT / ".env", override=True)
 
 OM_HOST = "http://localhost:8585"
-OM_TOKEN = "eyJraWQiOiJHYjM4OWEtOWY3Ni1nZGpzLWE5MmotMDI0MmJrOTQzNTYiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJvcGVuLW1ldGFkYXRhLm9yZyIsInN1YiI6ImFkbWluIiwicm9sZXMiOlsiQWRtaW4iXSwiZW1haWwiOiJhZG1pbkBvcGVuLW1ldGFkYXRhLm9yZyIsImlzQm90IjpmYWxzZSwidG9rZW5UeXBlIjoiUEVSU09OQUxfQUNDRVNTIiwidXNlcm5hbWUiOiJhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNzc2NjEzMzQxLCJleHAiOjE3ODQzODkzNDF9.W_89SEYlaqQqUfQghq2fZ6814ujFeO6Vo-4LMQz-9FSzPhwv9aURPuKO0oEFV9QAUu90gBpUqrbGncPeGU_NPLWWQzVFNamjBXpc71xgSz71RY5KOgUNBl-AC5JNRqLX9_LmuvvgUEMzeLZMRzdmDLr8bUTe_z-T--QY_3SnKbQjDlSqNBO2Yk-HATU-CLh1WZigifLP3kdQmVhd0ORBhhecxTwSzW0e9UoEjHT_m3DNp44U5LYngGJ378FgZvTh5N-X5oW7qcuAGOkqbW5l-vrKolSJvsilE1MTGAJTzpc0M5rJZYoFZehuae3oXVOzJvFjfHA34IpfMBTM_X7jUg"
-
+OM_TOKEN = "eyJraWQiOiJHYjM4OWEtOWY3Ni1nZGpzLWE5MmotMDI0MmJrOTQzNTYiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJvcGVuLW1ldGFkYXRhLm9yZyIsInN1YiI6ImFkbWluIiwicm9sZXMiOlsiQWRtaW4iXSwiZW1haWwiOiJhZG1pbkBvcGVuLW1ldGFkYXRhLm9yZyIsImlzQm90IjpmYWxzZSwidG9rZW5UeXBlIjoiUEVSU09OQUxfQUNDRVNTIiwidXNlcm5hbWUiOiJhZG1pbiIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiaWF0IjoxNzc2OTMwNjM0LCJleHAiOjE3ODQ3MDY2MzR9.v6fNDPumCCVkA1jax3OHaOfYvK--ubmfz_9u-pYsn18jI82pB_tumvh2U-Qs_zgCjHUVhLUJGqtUATaQ8TXr0rl0hl0B7z_rhAH8UOzKKxNZz3ZW8Tfe8UdBlMg2Q4UVCzUbesV40hiqDYZZcrHI7KILKOsFt4pCFRZbC_j7S9SO3MLrfVJtssvL6F2SZrG2Bdy7JUNHsmk3EfEuUb6LARODbaCRNqL9aXgu9bDuyqWW9yIGgVovsgJxXKhAPJWK7Qnuqhn0cS7FbPi7EjVd862rfs5_GhJCbCMchNKfsFmUO0W7zEgzX2a164ZN85V-FxSjWPDvhakvnTuzFLpFMg"
 HEADERS = {
     "Authorization": f"Bearer {OM_TOKEN}",
     "Content-Type": "application/json"
@@ -26,6 +25,8 @@ def _get_all_tables(limit: int = 200) -> list:
             params={"limit": limit},
             timeout=15
         )
+        if r.status_code != 200:
+            return []
         print(f"DEBUG _get_all_tables: status={r.status_code}, count={len(r.json().get('data', []))}")
         return r.json().get("data", [])
     except Exception as e:
@@ -47,6 +48,8 @@ def _find_table(table_name: str) -> dict:
 def search_assets(query: str, asset_type: str = "all", limit: int = 10) -> dict:
     try:
         tables = _get_all_tables(200)
+        if not tables:
+            return {"error": "No tables found. Please add a data source in OpenMetadata."}
         query_lower = query.lower()
         results = []
         for t in tables:
@@ -71,6 +74,8 @@ def search_assets(query: str, asset_type: str = "all", limit: int = 10) -> dict:
 def list_tables(limit: int = 20) -> dict:
     try:
         tables = _get_all_tables(limit)
+        if not tables:
+            return {"total": 0, "message": "No tables found. Please add a data source in OpenMetadata at http://localhost:8585", "tables": []}
         return {
             "total": len(tables),
             "note": f"Showing {len(tables)} tables from catalog",
@@ -270,6 +275,8 @@ def list_pipelines(limit: int = 10) -> dict:
 def generate_governance_report(limit: int = 10) -> dict:
     try:
         tables = _get_all_tables(limit)
+        if not tables:
+            return {"error": "No tables found. Please add a data source first."}
         report = []
         for t in tables:
             table_id = t.get("id")
